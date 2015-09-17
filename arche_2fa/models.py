@@ -11,6 +11,7 @@ from zope.component import adapter
 from zope.interface import implementer
 
 from arche_2fa.interfaces import ITwoFactAuthHandler
+from arche.interfaces import IWillLoginEvent
 
 
 class Token2FA(object):
@@ -61,9 +62,24 @@ class TwoFactAuthHandler(IterableUserDict):
             return token.validate(value)
         return False
 
+    def __nonzero__(self):
+        return True
+
+    def __repr__(self):
+        return '<%s.%s object>' % (self.__class__.__module__,
+                                   self.__class__.__name__)
+
 
 def get_registered_2fas(context, request):
     """ Shorthand to fetch all registered adapters.
         returns a generator with (<name>, <adapter>)
     """
     return request.registry.getAdapters((context, request), ITwoFactAuthHandler)
+
+def clear_used_token(event):
+    session = event.request.session
+    if '2fa_tokens' in session:
+        del session['2fa_tokens']
+
+def includeme(config):
+    config.add_subscriber(clear_used_token, IWillLoginEvent)

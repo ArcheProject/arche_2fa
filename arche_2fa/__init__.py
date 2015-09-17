@@ -6,5 +6,6 @@ _ = TranslationStringFactory('arche_2fa')
 
 def includeme(config):
     config.commit()
-    config.include('.views')
+    config.include('.models')
     config.include('.schemas')
+    config.include('.views')
