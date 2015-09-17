@@ -1,0 +1,81 @@
+from __future__ import unicode_literals
+
+from arche.schemas import LoginSchema
+from arche.interfaces import ISchemaCreatedEvent
+from arche.validators import existing_userid_or_email
+from arche.schemas import to_lowercase
+import colander
+import deform
+
+from arche_2fa.models import get_registered_2fas
+from arche_2fa import _
+from pyramid.httpexceptions import HTTPForbidden
+
+
+@colander.deferred
+def registered_2fa_names_validator(node, kw):
+    context = kw['context']
+    request = kw['request']
+    return colander.OneOf(dict(get_registered_2fas(context, request)).keys())
+
+@colander.deferred
+def type_2fa_widget(node, kw):
+    context = kw['context']
+    request = kw['request']
+    values = [('', _("<Select>"))]
+    values.extend([(name, obj.title) for (name, obj) in get_registered_2fas(context, request)])
+    return deform.widget.SelectWidget(values = values)
+
+
+class Request2FASchema(colander.Schema):
+    email_or_userid = colander.SchemaNode(colander.String(),
+                                          preparer = to_lowercase,
+                                          validator = existing_userid_or_email,
+                                          title = _(u"Email or UserID"),)
+    type_2fa = colander.SchemaNode(colander.String(),
+                                         title = _("Sign in method"),
+                                         validator = registered_2fa_names_validator,
+                                         widget = type_2fa_widget)
+
+
+class Login2FAValidator(object):
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, node, value):
+        type_2fa = self.request.GET.get('type_2fa', None)
+        methods = dict(get_registered_2fas(self.context, self.request))
+        if type_2fa not in methods:
+            raise colander.Invalid(node, _("The authentication method is invalid."))
+        if not methods[type_2fa].validate(value):
+            raise colander.Invalid(node, _("Invalid code"))
+
+
+@colander.deferred
+def login_2fa_validator(node, kw):
+    context = kw['context']
+    request = kw['request']
+    return Login2FAValidator(context, request)
+
+
+def insert_2fa_node(schema, event):
+    """ Inject the 2fa node in the schema, or abort if something seems fishy.
+    """
+    methods = dict(get_registered_2fas(event.context, event.request))
+    type_2fa = event.request.GET.get('type_2fa', None)
+    if type_2fa not in methods:
+        raise HTTPForbidden()
+    schema.add(colander.SchemaNode(colander.String(),
+                                   name = '2fa_code',
+                                   title = _("Two factor authentication code"),
+                                   validator = login_2fa_validator))
+    if 'email_or_userid' in schema:
+        schema['email_or_userid'].widget = deform.widget.HiddenWidget()
+        schema['email_or_userid'].default = event.request.GET.get('userid', '')
+
+
+def includeme(config):
+    config.add_subscriber(insert_2fa_node, [LoginSchema, ISchemaCreatedEvent])
+    config.add_content_schema('Auth', Request2FASchema, '2fa')
