@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from arche.schemas import LoginSchema
 from arche.interfaces import ISchemaCreatedEvent
-from arche.validators import existing_userid_or_email
+from arche.validators import allow_login_userid_or_email
 from arche.schemas import to_lowercase
 import colander
 import deform
@@ -30,7 +30,7 @@ def type_2fa_widget(node, kw):
 class Request2FASchema(colander.Schema):
     email_or_userid = colander.SchemaNode(colander.String(),
                                           preparer = to_lowercase,
-                                          validator = existing_userid_or_email,
+                                          validator = allow_login_userid_or_email,
                                           title = _(u"Email or UserID"),)
     type_2fa = colander.SchemaNode(colander.String(),
                                          title = _("Sign in method"),
