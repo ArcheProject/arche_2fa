@@ -22,8 +22,10 @@ def registered_2fa_names_validator(node, kw):
 def type_2fa_widget(node, kw):
     context = kw['context']
     request = kw['request']
-    values = [('', _("<Select>"))]
+    values = []
     values.extend([(name, obj.title) for (name, obj) in get_registered_2fas(context, request)])
+    if len(values) != 1: #Insert at either 0 length or anything with more than one choice.
+        values.insert(0, ('', _("<Select>")))
     return deform.widget.SelectWidget(values = values)
 
 
