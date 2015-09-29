@@ -1,0 +1,20 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="arche_2fa">
+<h3 i18n:translate="">Two-factor authentication code: ${code}</h3>
+
+<p><tal:ts i18n:translate="">Hello</tal:ts> ${user.title},</p>
+
+<p i18n:translate="email_login_explanation">
+  You may use the code above to login to your account
+  <b i18n:name="userid">${user.userid}</b>.
+  Please use the same browser window as you requested the login code in.
+</p>
+<p i18n:translate="email_login_faulty_request">
+  If you didn't request a login to your account and have received several of these emails,
+  please notify the staff at the site in question.
+</p>
+<tal:footer replace="structure view.render_template('arche:templates/emails/footer.pt')"></tal:footer>
+</tal:main>
