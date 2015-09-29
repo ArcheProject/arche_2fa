@@ -56,7 +56,7 @@ class TwoFactAuthHandler(IterableUserDict):
         self[str(token)] = token
         return token
 
-    def send(self, userid): #pragma: no coverage
+    def send(self, userid, view): #pragma: no coverage
         raise NotImplementedError()
 
     def validate(self, value):

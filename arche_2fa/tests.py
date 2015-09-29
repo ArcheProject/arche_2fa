@@ -10,7 +10,6 @@ from arche.api import User
 from arche_2fa.interfaces import ITwoFactAuthHandler
 
 
-
 class TwoFactAuthHandlerTests(TestCase):
 
     def setUp(self):

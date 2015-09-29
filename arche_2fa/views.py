@@ -30,7 +30,7 @@ class Request2FAToken(BaseForm):
             raise HTTPForbidden("Couldn't find a user")
         userid = user.userid
         type_2fa = appstruct['type_2fa']
-        self.methods[type_2fa].send(userid)
+        self.methods[type_2fa].send(userid, self)
         return HTTPFound(location = self.request.resource_url(self.context, '2fa_login', query = {'type_2fa': type_2fa, 'userid': userid}))
 
 
