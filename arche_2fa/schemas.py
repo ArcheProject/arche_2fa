@@ -10,6 +10,7 @@ import deform
 
 from arche_2fa.models import get_registered_2fas
 from arche_2fa import _
+from arche_2fa.interfaces import ITwoFactAuthHandler
 
 
 @colander.deferred
@@ -28,8 +29,34 @@ def type_2fa_widget(node, kw):
         values.insert(0, ('', _("<Select>")))
     return deform.widget.SelectWidget(values = values)
 
+@colander.deferred
+def max_token_validator(node, kw):
+    context = kw['context']
+    request = kw['request']
+    return MaxTokenValidator(context, request)
+
+
+class MaxTokenValidator(object):
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, node, value):
+        method_adapter = self.request.registry.queryMultiAdapter((self.context, self.request),
+                                                            interface = ITwoFactAuthHandler,
+                                                            name = value['type_2fa'])
+        if not method_adapter:
+            raise colander.Invalid(node, _("2FA-method not found."))
+        maxtokens = self.request.registry.settings['arche_2fa.maxtokens']
+        method_adapter.cleanup()
+        if len(method_adapter) >= maxtokens:
+            msg = _("too_many_attempts",
+                    default = "Too many attempts in a row. Wait a while before retrying.")
+            raise colander.Invalid(node, msg)
+
 
 class Request2FASchema(colander.Schema):
+    validator = max_token_validator
     email_or_userid = colander.SchemaNode(colander.String(),
                                           preparer = to_lowercase,
                                           validator = allow_login_userid_or_email,
