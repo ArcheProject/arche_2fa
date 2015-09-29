@@ -5,13 +5,13 @@ from random import choice
 import string
 
 from arche.interfaces import IRoot
+from arche.interfaces import IWillLoginEvent
 from arche.utils import utcnow
 from pyramid.interfaces import IRequest
 from zope.component import adapter
 from zope.interface import implementer
 
 from arche_2fa.interfaces import ITwoFactAuthHandler
-from arche.interfaces import IWillLoginEvent
 
 
 class Token2FA(object):
@@ -30,8 +30,11 @@ class Token2FA(object):
     def __cmp__(self, txt): return cmp(self.token, txt)
 
     def validate(self, value):
-        return self == value and utcnow() < self.expires
+        return self == value and not self.expired
 
+    @property
+    def expired(self):
+        return utcnow() > self.expires
 
 _default_charpool = string.letters + string.digits
 
@@ -53,7 +56,7 @@ class TwoFactAuthHandler(IterableUserDict):
         self[str(token)] = token
         return token
 
-    def send(self, userid):
+    def send(self, userid): #pragma: no coverage
         raise NotImplementedError()
 
     def validate(self, value):
@@ -62,10 +65,20 @@ class TwoFactAuthHandler(IterableUserDict):
             return token.validate(value)
         return False
 
+    def cleanup(self):
+        for key in tuple(self.keys()):
+            if self[key].expired:
+                del self[key]
+
+    @property
+    def has_valid_tokens(self):
+        self.cleanup()
+        return len(self)
+
     def __nonzero__(self):
         return True
 
-    def __repr__(self):
+    def __repr__(self): #pragma: no coverage
         return '<%s.%s object>' % (self.__class__.__module__,
                                    self.__class__.__name__)
 
@@ -77,8 +90,11 @@ def get_registered_2fas(context, request):
     return request.registry.getAdapters((context, request), ITwoFactAuthHandler)
 
 def clear_used_token(event):
+    """ Make sure any 2FA session data is cleared when a user authenticates."""
     session = event.request.session
     if '2fa_tokens' in session:
+        #In case adapters are instantiated during the same request
+        session['2fa_tokens'].clear()
         del session['2fa_tokens']
 
 def includeme(config):
