@@ -1,15 +1,15 @@
 from __future__ import unicode_literals
 
-from arche.schemas import LoginSchema
 from arche.interfaces import ISchemaCreatedEvent
-from arche.validators import allow_login_userid_or_email
+from arche.schemas import LoginSchema
 from arche.schemas import to_lowercase
+from arche.validators import allow_login_userid_or_email
+from pyramid.httpexceptions import HTTPForbidden
 import colander
 import deform
 
 from arche_2fa.models import get_registered_2fas
 from arche_2fa import _
-from pyramid.httpexceptions import HTTPForbidden
 
 
 @colander.deferred
