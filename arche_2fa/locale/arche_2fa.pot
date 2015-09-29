@@ -1,0 +1,103 @@
+#
+# SOME DESCRIPTIVE TITLE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE 1.0\n"
+"POT-Creation-Date: 2015-09-29 17:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Generated-By: Lingua 3.11\n"
+
+#. Default: Too many attempts in a row. Wait a while before retrying.
+#: ./arche_2fa/./schemas.py:53
+msgid "too_many_attempts"
+msgstr ""
+
+#: ./arche_2fa/./schemas.py:63
+msgid "Email or UserID"
+msgstr ""
+
+#: ./arche_2fa/./schemas.py:65
+msgid "Sign in method"
+msgstr ""
+
+#. Default: The authentication method is invalid.
+#: ./arche_2fa/./schemas.py:80
+msgid "authentication_method_invalid"
+msgstr ""
+
+#: ./arche_2fa/./schemas.py:29
+msgid "<Select>"
+msgstr ""
+
+#: ./arche_2fa/./schemas.py:49
+msgid "2FA-method not found."
+msgstr ""
+
+#: ./arche_2fa/./schemas.py:84
+msgid "Invalid code"
+msgstr ""
+
+#. Default: Two factor authentication code
+#: ./arche_2fa/./schemas.py:103
+msgid "two_factor_auth_code_title"
+msgstr ""
+
+#: ./arche_2fa/./views.py:17
+msgid "Send login token"
+msgstr ""
+
+#: ./arche_2fa/./app/demo/__init__.py:7
+msgid "Demonstration"
+msgstr ""
+
+#. Default: Demo authentication code: ${code}
+#: ./arche_2fa/./app/demo/__init__.py:11
+msgid "demo_auth_code"
+msgstr ""
+
+#: ./arche_2fa/./app/email/__init__.py:10
+msgid "Email"
+msgstr ""
+
+#. Default: ${head_title}: Two factor authentication code
+#: ./arche_2fa/./app/email/__init__.py:16
+msgid "2fa_email_subject"
+msgstr ""
+
+#: ./arche_2fa/./app/email/__init__.py:22
+msgid "Email sent"
+msgstr ""
+
+#: ./arche_2fa/./app/email/__init__.py:25
+msgid "UserID or email address invalid."
+msgstr ""
+
+#. Default: Two-factor authentication code: ${code}
+#: ./arche_2fa/./app/email/email.pt:6
+msgid "email_headline"
+msgstr ""
+
+#: ./arche_2fa/./app/email/email.pt:8
+msgid "Hello"
+msgstr ""
+
+#. Default: You may use the code above to login to your account ${userid}.
+#. Please use the same browser window as you requested the login code in.
+#: ./arche_2fa/./app/email/email.pt:10
+msgid "email_login_explanation"
+msgstr ""
+
+#. Default: If you didn't request a login to your account and have received
+#. several of these emails, please notify the staff at the site in question.
+#: ./arche_2fa/./app/email/email.pt:15
+msgid "email_login_faulty_request"
+msgstr ""

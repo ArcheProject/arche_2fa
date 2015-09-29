@@ -11,6 +11,7 @@ def includeme(config):
     config.include('.models')
     config.include('.schemas')
     config.include('.views')
+    config.add_translation_dirs('arche_2fa:locale/')
     settings = config.registry.settings
     for key, value in DEFAULT_SETTINGS.items():
         settings.setdefault(key, value)

@@ -3,7 +3,7 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="arche_2fa">
-<h3 i18n:translate="">Two-factor authentication code: ${code}</h3>
+<h3 i18n:translate="email_headline">Two-factor authentication code: <tal:ts i18n:name="code">${code}</tal:ts></h3>
 
 <p><tal:ts i18n:translate="">Hello</tal:ts> ${user.title},</p>
 

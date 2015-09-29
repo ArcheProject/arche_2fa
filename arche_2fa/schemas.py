@@ -77,7 +77,9 @@ class Login2FAValidator(object):
         type_2fa = self.request.GET.get('type_2fa', None)
         methods = dict(get_registered_2fas(self.context, self.request))
         if type_2fa not in methods:
-            raise colander.Invalid(node, _("The authentication method is invalid."))
+            msg = _("authentication_method_invalid",
+                    default = "The authentication method is invalid.")
+            raise colander.Invalid(node, msg)
         if not methods[type_2fa].validate(value):
             raise colander.Invalid(node, _("Invalid code"))
 
@@ -98,7 +100,8 @@ def insert_2fa_node(schema, event):
         raise HTTPForbidden()
     schema.add(colander.SchemaNode(colander.String(),
                                    name = '2fa_code',
-                                   title = _("Two factor authentication code"),
+                                   title = _("two_factor_auth_code_title",
+                                             default = "Two factor authentication code"),
                                    validator = login_2fa_validator))
     if 'email_or_userid' in schema:
         schema['email_or_userid'].widget = deform.widget.HiddenWidget()
